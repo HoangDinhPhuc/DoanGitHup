@@ -3,7 +3,7 @@ import 'models/book_detail_model.dart';
 import 'models/book_model.dart';
 
 class BookRepository {
-    String domainMain = 'https://img.otruyenapi.com/';
+  String domainMain = 'https://img.otruyenapi.com/';
   String domainFE = 'https://otruyen.cc';
   String domainCDN = 'https://img.otruyenapi.com';
   String urlThumbnail = 'https://img.otruyenapi.com/uploads/comics/';
@@ -30,6 +30,7 @@ class BookRepository {
       return [];
     }
   }
+
   Future<BookDetailModel> getDetailStory(String slug) async {
     final response = await service.getData(
         // danh sách truyện
@@ -71,4 +72,26 @@ class BookRepository {
     }
   }
 
+  Future<List<String>> getStngUrlImages(String urlImageList) async {
+    final response = await service.getData(
+        // danh sách truyện
+        domainApp: urlImageList,
+        path: '');
+    List<String> chaptersURL = [];
+
+    if (response.statusCode == 200) {
+      final domain = response.data['data']['domain_cdn'];
+      final data = response.data['data']['item'];
+      final pathImage = data['chapter_path'];
+
+      for (var e in data['chapter_image']) {
+        String url = domain + '/' + pathImage + '/' + e['image_file'];
+        chaptersURL.add(url);
+      }
+
+      return chaptersURL;
+    } else {
+      return [];
+    }
+  }
 }
